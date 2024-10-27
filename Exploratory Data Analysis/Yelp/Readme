@@ -1,0 +1,26 @@
+Yelp Reviews Sentiment Analysis
+This project explores sentiment analysis on a Yelp reviews dataset containing over 1.5 million entries, analyzing the tone, length, and overall usefulness of reviews across various star ratings. 
+This analysis provides insights into consumer sentiments, word use patterns, and review behaviors.
+
+Dataset Overview
+Source: UniSA provided this dataset, which is also available on Data.world.
+Content: 1,569,264 reviews of local businesses (e.g., restaurants, auto services, home services).
+Metrics Analyzed: Star ratings, review lengths, positive and negative word counts, and votes marking reviews as useful.
+Key Analyses
+Star Ratings
+General Sentiment: Reviews are primarily positive, with 67% rated at 4 or 5 stars. The mean rating is 3.7 stars, with a median of 4.
+Distribution: The least common rating is 2 stars (9% of reviews).
+Review Length
+Average Length: 125.6 characters, with most reviews between 48 to 165 characters.
+Observation: Negative reviews tend to be longer than positive reviews, with one extreme case of 3,528 characters.
+Sentiment Analysis
+Positive vs. Negative Words: On average, reviews contain 6 positive words compared to 2 negative words, leading to a net sentiment that skews positively.
+Word Distribution: Positive words show a more normal distribution, while negative words are right-skewed, suggesting reviews generally emphasize positive language.
+Net Sentiment
+Calculated by subtracting the count of negative words from positive ones. The net sentiment has a mean of 3.8, indicating an overall positive inclination in reviews.
+Review Length vs. Usefulness
+Correlation: Longer reviews receive more votes as useful, with a weak positive correlation of 0.33 between review length and usefulness.
+Insight: Higher star ratings (4 and 5) tend to correlate with longer review lengths, showing that positive reviews are often more detailed.
+Conclusion
+The analysis shows that Yelp reviews generally favor positive sentiment, with longer reviews typically rated higher. Despite a weak correlation between review length and perceived usefulness, it is evident that detailed reviews are more frequently marked as useful by users.
+
