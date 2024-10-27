@@ -1,0 +1,24 @@
+This project simulates the spread of a contagious disease, like COVID-19, within a population over a set period, allowing for experimentation with parameters like infection rate, mortality rate, social interaction frequency, and illness duration. By adjusting these variables, the simulation provides insights into how factors such as social distancing, infection risk, and treatment duration impact disease outcomes and mortality rates.
+
+Features
+Adjustable Parameters: Modify population size, infection rate, mortality rate, social interaction frequency, and illness duration to observe various outbreak scenarios.
+Daily Simulation: Tracks daily statistics including new infections, total infected, healthy individuals, and deceased count.
+End-of-Day Reports: Detailed daily logs showing infection, health, and mortality statistics.
+Edge Condition Alerts: Stops if there are no more infected individuals or if the entire population is deceased.
+Key Parameters
+N_population: Initial population count.
+InitialSick: Number of initially infected individuals.
+Days: Simulation duration in days.
+mortality_rate: Probability of death for infected individuals.
+infection_rate: Probability of transmission per contact.
+max_meetings: Maximum daily contacts per person.
+duration_of_illness: Days an individual remains infected.
+Limitations
+Extended runtime for large populations.
+No demographic variability (e.g., age, health conditions).
+No super-spreader events or hospitalization effects considered.
+Observations
+Increased illness duration correlates with higher mortality.
+Lower encounter rates (e.g., simulating lockdown) reduce overall infections.
+Reduced infection rates positively impact mortality.
+High mortality rates may shorten simulation runs by depleting the population.
