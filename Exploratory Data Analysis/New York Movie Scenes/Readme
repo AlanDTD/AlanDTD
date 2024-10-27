@@ -1,0 +1,26 @@
+Exploratory Data Analysis on New York Film Permits
+
+This notebook performs an exploratory data analysis (EDA) on movie and television filming permits in New York City. 
+The dataset includes 52,350 permits detailing start and end times, filming locations within New York, types of media genres, and whether a filming location falls within a police precinct. 
+The analysis examines trends in popular filming locations, average and maximum filming durations, genre impact on filming time, precinct popularity, and other insights.
+
+Key Analyses
+Filming Duration Analysis:
+
+The longest recorded filming duration is 3,528 hours (147 days) for a theater production in Manhattan.
+The shortest permit is 0.02 hours (1 minute) for a television show in Manhattan, which might indicate a clerical error.
+The average filming permit duration is approximately 19.7 hours, with most durations clustering between 10 to 20 hours.
+Genre and Filming Duration:
+
+Analyzes how different genres may influence the duration of filming permits.
+Popular Filming Locations:
+
+Highlights the most frequently used locations for filming within New York, with a breakdown by borough and neighborhood.
+Police Precinct Analysis:
+
+Identifies which police precincts are most popular for filming locations and investigates potential reasons.
+Insights and Observations
+The EDA reveals trends in filming locations, duration, and genre impact, providing useful insights for location managers, city officials, and film industry stakeholders interested in optimizing filming logistics within New York.
+Usage
+This notebook requires Python with relevant data science libraries (e.g., pandas, matplotlib). It processes and visualizes the dataset, helping identify filming trends and inform strategic planning for future film productions.
+
