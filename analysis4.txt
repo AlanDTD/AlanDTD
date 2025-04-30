@@ -1,0 +1,141 @@
+# Planned Outage Analysis for Sentiment Scores
+
+This document provides Python code snippets to analyse sentiment scores for planned outages by days of the week, timing, seasonality, customer verbatims, and correlation with outage duration. The goal is to identify optimal scheduling, detect seasonal patterns, uncover themes from customer feedback, and understand how outage duration affects customer sentiment.
+
+## 1. Data Preparation
+Ensure your data frame `df` contains:
+- `date`: date of outage
+- `sentiment_score`: customer sentiment score
+- `time`: outage time (morning, afternoon, evening)
+- `verbatim`: customer verbatim feedback
+- `duration`: duration of outage (numeric, typically hours)
+
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Convert date column and extract weekday, month, year, and hour
+df['date'] = pd.to_datetime(df['date'])
+df['day_of_week'] = df['date'].dt.day_name()
+df['month'] = df['date'].dt.month_name()
+df['year'] = df['date'].dt.year
+df['hour'] = df['date'].dt.hour
+```
+
+## 2. Sentiment by Day and Time
+Calculate and plot sentiment scores by day and outage timing:
+
+```python
+sentiment_day_time = df.groupby(['day_of_week', 'time'])['sentiment_score'].mean().unstack()
+sentiment_day_time = sentiment_day_time.reindex(['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'])
+
+sentiment_day_time.plot(kind='bar')
+plt.xlabel('Day of Week')
+plt.ylabel('Avg Sentiment')
+plt.title('Average Sentiment by Day and Time')
+plt.tight_layout()
+plt.show()
+```
+
+## 3. Seasonal and Temporal Patterns
+Explore seasonal trends and temporal patterns:
+
+```python
+# Sentiment by Month
+monthly_sentiment = df.groupby('month')['sentiment_score'].mean().reindex(['January','February','March','April','May','June','July','August','September','October','November','December'])
+monthly_sentiment.plot(kind='bar')
+plt.xlabel('Month')
+plt.ylabel('Avg Sentiment')
+plt.title('Average Sentiment by Month')
+plt.tight_layout()
+plt.show()
+
+# Sentiment by Year
+yearly_sentiment = df.groupby('year')['sentiment_score'].mean()
+yearly_sentiment.plot(marker='o')
+plt.xlabel('Year')
+plt.ylabel('Avg Sentiment')
+plt.title('Average Sentiment by Year')
+plt.tight_layout()
+plt.show()
+
+# Sentiment by Hour
+hourly_sentiment = df.groupby('hour')['sentiment_score'].mean()
+hourly_sentiment.plot()
+plt.xlabel('Hour of Day')
+plt.ylabel('Avg Sentiment')
+plt.title('Average Sentiment by Hour')
+plt.tight_layout()
+plt.show()
+```
+
+## 4. Heatmap of Sentiment Scores
+Visualise patterns clearly:
+
+```python
+heatmap_data = df.pivot_table(index='day_of_week', columns='hour', values='sentiment_score', aggfunc='mean')
+sns.heatmap(heatmap_data, cmap='coolwarm', annot=True)
+plt.title('Heatmap of Sentiment Scores (Day vs Hour)')
+plt.tight_layout()
+plt.show()
+```
+
+## 5. Statistical Testing (ANOVA)
+Determine significance of seasonal differences:
+
+```python
+from scipy.stats import f_oneway
+monthly_groups = [group['sentiment_score'].values for name, group in df.groupby('month')]
+f_stat_month, p_val_month = f_oneway(*monthly_groups)
+print(f'Seasonal F-stat: {f_stat_month}, p-value: {p_val_month}')
+```
+
+## 6. Verbatim Analysis (Text Processing)
+Analyse customer verbatims for thematic insights:
+
+```python
+from sklearn.feature_extraction.text import CountVectorizer
+from wordcloud import WordCloud
+
+# Word Cloud
+text = ' '.join(df['verbatim'].dropna().values)
+wordcloud = WordCloud(width=800, height=400, background_color='white').generate(text)
+plt.figure(figsize=(10, 5))
+plt.imshow(wordcloud, interpolation='bilinear')
+plt.axis('off')
+plt.title('Customer Feedback Word Cloud')
+plt.show()
+
+# Common phrases
+vectorizer = CountVectorizer(ngram_range=(2,3), stop_words='english')
+X_counts = vectorizer.fit_transform(df['verbatim'].dropna())
+phrase_counts = pd.DataFrame(X_counts.sum(axis=0), columns=vectorizer.get_feature_names_out()).T
+phrase_counts.columns = ['count']
+print(phrase_counts.sort_values(by='count', ascending=False).head(10))
+```
+
+## 7. Correlation Analysis (Sentiment vs Outage Duration)
+Explore the relationship between sentiment scores and outage durations:
+
+```python
+# Correlation coefficient
+correlation = df[['sentiment_score', 'duration']].corr().iloc[0,1]
+print(f'Correlation between Sentiment and Duration: {correlation}')
+
+# Scatter plot
+sns.scatterplot(x='duration', y='sentiment_score', data=df)
+plt.xlabel('Outage Duration (hours)')
+plt.ylabel('Sentiment Score')
+plt.title('Correlation between Sentiment and Outage Duration')
+plt.tight_layout()
+plt.show()
+```
+
+**Look out for:**
+- Negative correlation indicating longer outages might negatively affect customer sentiment.
+
+---
+### Additional Tips
+- Regularly refresh analysis with new data for continuous improvement.
+- Combine quantitative and qualitative analyses for holistic insights.
