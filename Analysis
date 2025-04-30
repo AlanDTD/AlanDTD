@@ -1,0 +1,98 @@
+# Day of Week Analysis for Sentiment Scores
+
+This document provides Python code snippets to analyse sentiment scores by days of the week for planned outages. The goal is to identify trends, differences, and potential improvements.
+
+## 1. Data Preparation
+- Ensure your data frame `df` contains columns `date` (date of outage) and `sentiment_score` (customer sentiment).
+
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Convert date column and extract weekday
+df['date'] = pd.to_datetime(df['date'])
+df['day_of_week'] = df['date'].dt.day_name()
+```
+
+## 2. Average Sentiment by Day
+- Calculates and plots average sentiment by day of the week.
+
+```python
+mean_sent = df.groupby('day_of_week')['sentiment_score'].mean()
+mean_sent = mean_sent.reindex(['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'])
+
+# Plot sentiment
+mean_sent.plot(kind='bar')
+plt.xlabel('Day of Week')
+plt.ylabel('Avg Sentiment')
+plt.tight_layout()
+plt.show()
+```
+**Look out for:**
+- Days with noticeably lower average sentiment scores that might indicate customer dissatisfaction.
+
+## 3. Statistical Hypothesis Testing (Weekday vs Weekend)
+- Tests if there's a statistically significant difference between weekdays and weekends.
+
+```python
+from scipy.stats import ttest_ind
+weekday_scores = df[df.day_of_week.isin(['Monday','Tuesday','Wednesday','Thursday','Friday'])].sentiment_score
+weekend_scores = df[df.day_of_week.isin(['Saturday','Sunday'])].sentiment_score
+t_stat, p_val = ttest_ind(weekday_scores, weekend_scores)
+print(f'T-stat: {t_stat}, p-value: {p_val}')
+```
+**Look out for:**
+- p-values < 0.05 indicating a significant difference in customer sentiment between weekdays and weekends.
+
+## 4. OLS Regression for Day Impact
+- Assesses the impact of each day of the week on sentiment scores using regression analysis.
+
+```python
+import statsmodels.formula.api as smf
+model = smf.ols('sentiment_score ~ C(day_of_week)', data=df).fit()
+print(model.summary())
+```
+**Look out for:**
+- Coefficient significance (p-values) and their magnitude indicating how much each day affects sentiment.
+
+## 5. Predictive Uplift Analysis (Moving Outages to Wednesday)
+- Estimates potential improvements if planned outages were moved to a different weekday (e.g., Wednesday).
+
+```python
+uplift = (model.predict(df.assign(day_of_week='Wednesday')) - model.predict(df)).mean()
+print('Avg uplift if moved to Wednesday:', uplift)
+```
+**Look out for:**
+- Positive uplift values suggesting that rescheduling could improve overall customer sentiment.
+
+## 6. Random Forest Regression
+- A machine-learning approach to predict sentiment scores and validate findings from the regression model.
+
+```python
+from sklearn.pipeline import make_pipeline
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.model_selection import train_test_split
+
+pipeline = make_pipeline(OneHotEncoder(), RandomForestRegressor(n_estimators=100, random_state=42))
+X_train, X_test, y_train, y_test = train_test_split(df[['day_of_week']], df['sentiment_score'], test_size=0.2, random_state=42)
+pipeline.fit(X_train, y_train)
+print('R² on test set:', pipeline.score(X_test, y_test))
+```
+
+## 7. Predictive Uplift with Random Forest
+- Provides another estimation of potential improvements from moving outages.
+
+```python
+uplift_rf = (pipeline.predict(pd.DataFrame({'day_of_week': ['Wednesday']*len(df)})) - pipeline.predict(df[['day_of_week']])).mean()
+print('Avg uplift if moved to Wednesday:', uplift_rf)
+```
+
+**Look out for:**
+- Similar results between the OLS and Random Forest models, reinforcing confidence in findings.
+
+---
+### Additional Tips
+- Investigate unusually low sentiment scores individually to understand context.
+- Regularly update analysis with new data to track trends and adapt strategies.
+- Combine these insights with qualitative data (customer verbatims) for deeper context.
